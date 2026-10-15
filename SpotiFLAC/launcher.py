@@ -747,6 +747,31 @@ def parse_args(profile_defaults: dict | None = None) -> argparse.Namespace:
         "(same interface, open it at http://<host>:<port> in a browser)",
     )
     parser.add_argument(
+        "--telegram-bot",
+        action="store_true",
+        default=False,
+        help="Run the urmusicapi Telegram bot.",
+    )
+    parser.add_argument(
+        "--telegram-token",
+        default=os.getenv("URMUSICAPI_TELEGRAM_TOKEN", ""),
+        help="Telegram bot token (or set URMUSICAPI_TELEGRAM_TOKEN).",
+    )
+    parser.add_argument(
+        "--telegram-admin-id",
+        action="append",
+        default=[],
+        metavar="USER_ID",
+        help="Telegram user id with admin permissions; repeat for multiple.",
+    )
+    parser.add_argument(
+        "--telegram-daily-limit",
+        type=int,
+        default=int(os.getenv("URMUSICAPI_TELEGRAM_DAILY_LIMIT", "0") or 0),
+        metavar="COUNT",
+        help="Default per-user daily download limit for the Telegram bot (0 = unlimited).",
+    )
+    parser.add_argument(
         "--host",
         default="127.0.0.1",
         help="Host to bind --web to. Defaults to 127.0.0.1 (this machine only). "
@@ -2051,6 +2076,43 @@ async def amain() -> None:
             port=web_args.port,
             token=resolve_web_token(web_args.token),
             multiuser=web_args.multiuser,
+        )
+        return
+
+    if "--telegram-bot" in sys.argv:
+        telegram_parser = argparse.ArgumentParser(add_help=False, allow_abbrev=False)
+        telegram_parser.add_argument("--telegram-token", default="")
+        telegram_parser.add_argument("--telegram-admin-id", action="append", default=[])
+        telegram_parser.add_argument(
+            "--telegram-daily-limit",
+            type=int,
+            default=int(os.getenv("URMUSICAPI_TELEGRAM_DAILY_LIMIT", "0") or 0),
+        )
+        telegram_args, _ = telegram_parser.parse_known_args(sys.argv[1:])
+
+        from .telegram_bot import parse_admin_ids, run_telegram_bot_async
+
+        token = telegram_args.telegram_token.strip() or os.getenv(
+            "URMUSICAPI_TELEGRAM_TOKEN", ""
+        ).strip()
+        if not token:
+            print(
+                "Telegram bot token is missing. Pass --telegram-token or set "
+                "URMUSICAPI_TELEGRAM_TOKEN.",
+                file=sys.stderr,
+            )
+            raise SystemExit(2)
+        admin_ids = parse_admin_ids(os.getenv("URMUSICAPI_TELEGRAM_ADMINS", ""))
+        for value in telegram_args.telegram_admin_id:
+            try:
+                admin_ids.add(int(value))
+            except (TypeError, ValueError):
+                pass
+        await run_telegram_bot_async(
+            token=token,
+            admin_user_ids=admin_ids,
+            output_dir=os.getenv("SPOTIFLAC_DOWNLOAD_DIR", "").strip() or None,
+            default_daily_limit=max(0, int(telegram_args.telegram_daily_limit)),
         )
         return
 

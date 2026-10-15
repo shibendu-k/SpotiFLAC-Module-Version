@@ -105,6 +105,8 @@ renders it usefully. Every page below is the same text that used to be here.
 
 | Page | What's in it |
 | --- | --- |
+| [First-Time Setup](docs/guide/first-time-setup.md) | Minimal onboarding checklist from install to first download |
+| [Examples](docs/guide/examples.md) | Copy/paste CLI, Python, web, and Telegram bot usage patterns |
 | [Quick Start](docs/guide/quick-start.md) | Every way to run it — GUI, web, CLI, terminal UI, Python — and the URL types it accepts |
 | [Terminal UI](docs/guide/tui.md) | `--tui`, the guided mode: every setting on one screen, and the download queue live |
 | [Extensions](docs/guide/extensions.md) | Registries, installing providers, signature verification and trust tiers |
