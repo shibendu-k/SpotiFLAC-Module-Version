@@ -26,6 +26,51 @@ SpotiFLAC(
 )
 ```
 
+## First-time configuration checklist
+
+If you're setting up a fresh instance, configure these first:
+
+1. **Registry source** (`--registries` / `SPOTIFLAC_REGISTRIES`) so extensions can be discovered.
+2. **Provider order** (`--service ...`) to define extension priority.
+3. **Quality profile** (`--quality`) and fallback behavior (`--fallback` / `--no-fallback`).
+4. **Output layout** (`--filename-format`, artist/album subfolders, playlist subfolders).
+5. **Reusable profile** (`--save-profile`) once the above works.
+
+Recommended baseline:
+
+```bash
+spotiflac "https://open.spotify.com/track/TRACK_ID" ./out \
+  --service ext:tidal-web ext:qobuz-web \
+  --quality LOSSLESS \
+  --fallback \
+  --save-profile default
+```
+
+Then run future downloads with:
+
+```bash
+spotiflac "https://open.spotify.com/playlist/PLAYLIST_ID" ./out --profile default
+```
+
+## Telegram bot configuration
+
+The built-in Telegram bot mode reads these settings:
+
+- `--telegram-bot` to run bot mode
+- `--telegram-token` or `URMUSICAPI_TELEGRAM_TOKEN`
+- `--telegram-admin-id` (repeatable) and/or `URMUSICAPI_TELEGRAM_ADMINS`
+- `--telegram-daily-limit` or `URMUSICAPI_TELEGRAM_DAILY_LIMIT`
+- `SPOTIFLAC_DOWNLOAD_DIR` to control output destination
+
+Example:
+
+```bash
+spotiflac --telegram-bot \
+  --telegram-token "<your-bot-token>" \
+  --telegram-admin-id 123456789 \
+  --telegram-daily-limit 20
+```
+
 ### Lyrics Provider Health Check
 
 SpotiFLAC can probe the endpoints of the configured lyrics providers before embedding lyrics, to verify which lyric sources are currently reachable.

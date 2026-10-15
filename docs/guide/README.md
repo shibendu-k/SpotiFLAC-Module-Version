@@ -6,6 +6,8 @@ usefully. The text is unchanged by the split.
 
 | Page | What's in it |
 | --- | --- |
+| [First-Time Setup](first-time-setup.md) | Minimal onboarding checklist from install to first download |
+| [Examples](examples.md) | Copy/paste CLI, Python, web, and Telegram bot usage patterns |
 | [Quick Start](quick-start.md) | Every way to run it — GUI, web, CLI, terminal UI, Python — and the URL types it accepts |
 | [Terminal UI](tui.md) | `--tui`, the guided mode: every setting on one screen, and the download queue live |
 | [Extensions](extensions.md) | Registries, installing providers, signature verification and trust tiers |
